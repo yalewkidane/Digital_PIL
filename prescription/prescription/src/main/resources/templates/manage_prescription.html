@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<div th:replace="fragments/header :: header-css"/>
+<title>Management Prescription Page</title>
+
+<style>
+
+.custom_select_width{
+    height:30px;
+    width: 120px;
+}
+.custom_btn_width {
+	height:30px;
+    width: 100px;
+}
+
+.custom_btn_width_2 {
+	height:30px;
+    width: 200px;
+}
+
+</style>
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+
+<div class="container">
+    <div class="col-md-6 col-md-offset-3">
+	<h1>Manage Prescription  Page</h1>
+<br>
+		<table>
+			<tr>
+				<th>
+						<textarea name="Text"   id="managmentDrugCodeViewTxt" 
+							cols="50" rows="15" readonly> 
+						</textarea>
+				</th>
+				<th>&nbsp;&nbsp;&nbsp;&nbsp;</th>	
+				<th valign="top">
+				      <select id="mngPrescLanguageSelect" class="btn-primary custom_select_width">
+							<option value="english">English</option>
+							<option value="amharic">Amharic</option>
+							<option value="oromifa">Oromifa</option>
+							<option value="tigrigna">Tigrigna</option>
+						</select>
+				</th>
+				<th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+				<th valign="top">
+						<button type="button" id="managementSearchBtn" onclick="searchPrescriptionLanguage()"
+						class="btn btn-primary custom_btn_width">  Search  </button>
+				</th>
+			</tr>
+	
+		</table>
+	
+	<br>
+	<br>
+		<div class="form-group">
+                        <label for="DrugCode">Drug Code</label>: 
+                        <input type="text" id="mngPrescriptionDrugCode" 
+                        	name="drugCode" class="form-control" 
+                        	autofocus="autofocus" placeholder="Drug code" />
+                    </div>
+
+
+			<table>
+			<tr> <th>Select Language : </th>
+				<th>&nbsp;&nbsp;&nbsp;&nbsp;</th>	
+				<th valign="top">
+				      <select id="mngPreLangSelect" class="btn-primary custom_select_width">
+							<option value="english">English</option>
+							<option value="amharic">Amharic</option>
+							<option value="oromifa">Oromifa</option>
+							<option value="tigrigna">Tigrigna</option>
+						</select>
+						<br>
+				</th>
+			
+			</tr>
+			</table>
+			<br>
+
+			<div class="form-group">
+                        <label for="email">Drug Description</label>: 
+                        <textarea name="Text1"   id="mngDrugPrescriptionText" 
+							cols="80" rows="15" placeholder="Detail" ></textarea>
+                    </div>
+                    
+			
+			<table>
+			<tr>
+				<th valign="top">
+						<button type="button" id="addPrescGenerateQrcodeBtn" onclick="searchPrescription()"
+						class="btn btn-primary custom_btn_width">  Search  </button>
+				</th>
+				<th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+				<th valign="top">
+						<button type="button" id="addPrescPrintGeneratedQrcodeBtn" onclick="updatePrescription()"
+						class="btn btn-primary custom_btn_width">  Update  </button>
+				</th>
+				<th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+				<th valign="top">
+						<button type="button" id="addPrescSearchQrcodeBtn" onclick="deletePrescription()"
+						class="btn btn-primary custom_btn_width">  Delete</button>
+				</th>
+			</tr>		
+			
+			</table>
+			<br>
+			
+			<div>
+			    <label for="email">Generated QR Code</label>: 
+				<img src="/img/drug_qr_code.jpg" alt="yalew" style="width:100%" id="mngPrescGeneratedQrcodeimg">
+		
+			<div>
+  
+			<br>
+			<br>
+			<div th:replace="fragments/footer :: footer"/>
+
+	</div> 
+	
+	<script>
+	
+	function searchPrescriptionLanguage(){
+		 var ip = location.host;
+		 var addPreLang=document.getElementById("mngPrescLanguageSelect");
+		 var language_ = addPreLang.options[addPreLang.selectedIndex].value;
+		 var theUrl = "http://" + ip +"/searchPrescriptionLanguage?language="+language_;
+		 var xmlHttp = new XMLHttpRequest();
+		 xmlHttp.open("GET", theUrl, false); // false for synchronous requestddd
+		 xmlHttp.send(null);
+		 var response = xmlHttp.responseText;
+		 if(response!=""){
+			 //var obj = JSON.parse(response);
+			 document.getElementById("managmentDrugCodeViewTxt").value=response;
+		 }
+	 }
+	
+	function searchPrescription(){
+		 var ip = location.host;
+		 var drugCode = document.getElementById("mngPrescriptionDrugCode").value;
+		 var addPreLang=document.getElementById("mngPreLangSelect");
+		 var language_ = addPreLang.options[addPreLang.selectedIndex].value;
+		 var theUrl = "http://" + ip +"/searchPrescription?code="+drugCode+"&language="+language_;
+		
+		 var xmlHttp = new XMLHttpRequest();
+		 xmlHttp.open("GET", theUrl, false); // false for synchronous requestddd
+		 xmlHttp.send(null);
+		 var response = xmlHttp.responseText;
+		 if(response!=""){
+			 var obj = JSON.parse(response);
+			 document.getElementById("mngDrugPrescriptionText").value=obj.description;
+			 document.getElementById('mngPrescGeneratedQrcodeimg').src ="http://"+location.host+"/QR_Images/"+obj.code+".png";  
+		 }
+	 }
+	
+	 function updatePrescription() {
+		 var ip = location.host;
+		 var drugCode = document.getElementById("mngPrescriptionDrugCode").value;
+		 var drugdescription = document.getElementById("mngDrugPrescriptionText").value;
+		 
+		 var addPreLang=document.getElementById("mngPreLangSelect");
+		 var language_ = addPreLang.options[addPreLang.selectedIndex].value;
+		 
+		 if(drugCode=="" || drugdescription==""){
+			 alert("Please insert the drug code and Description");
+		 }else{
+			 var drug = {};
+			 drug.code=drugCode;
+			 drug.description= drugdescription;
+			 drug.language = language_;
+			 
+			 theUrl = "http://" + ip + "/updatePrescription";
+			 var xmlHttp = new XMLHttpRequest();
+			 xmlHttp.open("POST", theUrl, false); // false for synchronous requestddd
+			 xmlHttp.send(JSON.stringify(drug));
+			 var response = xmlHttp.responseText;
+			 
+			 alert(response);
+			 
+		 }
+	 
+	 }
+	 
+	 function deletePrescription(){
+		 var ip = location.host;
+		 var drugCode = document.getElementById("mngPrescriptionDrugCode").value;
+		 var addPreLang=document.getElementById("mngPreLangSelect");
+		 var language_ = addPreLang.options[addPreLang.selectedIndex].value;
+		 var theUrl = "http://" + ip +"/deletePrescription?code="+drugCode+"&language="+language_;
+		
+		 var xmlHttp = new XMLHttpRequest();
+		 xmlHttp.open("GET", theUrl, false); // false for synchronous requestddd
+		 xmlHttp.send(null);
+		 var response = xmlHttp.responseText;
+		 alert(response)
+	 }
+	
+	</script>
+
+<script type="text/javascript" th:src="@{/webjars/jquery/3.2.1/jquery.min.js/}"></script>
+ <script type="text/javascript" th:src="@{/webjars/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<div th:replace="fragments/header :: header-css"/>
+<title>Prescription Page</title>
+
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+ <link rel="stylesheet" href="/resources/demos/style.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+ <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" crossorigin="anonymous">
+
+ <style>
+ .custom_select_width{
+        height:30px;
+        width: 120px;
+    }
+    .custom_btn_width {
+    	height:30px;
+        width: 100px;
+    }
+
+    .custom_btn_width_2 {
+    	height:30px;
+        width: 200px;
+    }
+ </style>
+ 
+ 
+<script type="text/javascript">
+    $(window).on('load',function(){
+        $('#exampleModal').modal('show');
+    });
+    
+    function searchPrescription(){
+    	$(window).on('load',function(){
+            $('#exampleModal').modal('hide');
+        });
+    	
+    	var url_full = window.location.href;
+    	
+    	url_code=url_full.split('drugCode=');
+    	
+    	drugCode=url_code[url_code.length-1];
+    	
+		 var ip = location.host;
+		 var addPreLang=document.getElementById("prescriptionLangSelect");
+		 var language_ = addPreLang.options[addPreLang.selectedIndex].value;
+		 var theUrl = "http://" + ip +"/prescription_get?drugCode="+drugCode+"&language="+language_;
+		
+		 var xmlHttp = new XMLHttpRequest();
+		 xmlHttp.open("GET", theUrl, false); // false for synchronous requestddd
+		 xmlHttp.send(null);
+		 var response = xmlHttp.responseText;
+		 
+		 //alert(response)
+		 if(response!=""){
+			 var obj = JSON.parse(response);
+			 document.getElementById("presceriptiontDrugCodeViewTxt").value=obj.description;
+			 document.getElementById("mngPrescriptionDrugCode").value=obj.code;
+		 }else{
+			 document.getElementById("presceriptiontDrugCodeViewTxt").value="No Data";
+			 document.getElementById("mngPrescriptionDrugCode").value="";
+		 }
+		
+	 }
+    
+</script>
+
+</head>
+
+<body>
+<div th:replace="fragments/header :: header"/>
+
+<div class="container">
+    <div class="col-md-6 col-md-offset-3">
+    
+      <h1>Drug Prescription Page</h1>
+      
+      <br>
+      
+		<div class="form-group">
+	                <label for="DrugCode">Drug Code</label>: 
+	                <input type="text" id="mngPrescriptionDrugCode" 
+	                	name="drugCode" class="form-control" 
+	                	autofocus="autofocus" placeholder="Drug code" readonly/>
+	            </div>
+	            
+	            
+	          <div>
+	   		<textarea name="Text"   id="presceriptiontDrugCodeViewTxt" 
+						cols="70" rows="15" readonly> 
+				</textarea>
+	   	</div>
+      		
+      		<br>
+	  <br>
+      		
+      		
+      				<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+  Change Language
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+  <div class="modal-dialog">
+  <div class="modal-content">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Prescription Language</h3>
+  </div>
+  <div class="modal-body">
+    <table>
+			<tr> <th>Select Language : </th>
+				<th>&nbsp;&nbsp;&nbsp;&nbsp;</th>	
+				<th valign="top">
+				      <select id="prescriptionLangSelect" class="btn-primary custom_select_width">
+							<option value="english">English</option>
+							<option value="amharic">Amharic</option>
+							<option value="oromifa">Oromifa</option>
+							<option value="tigrigna">Tigrigna</option>
+						</select>
+						<br>
+				</th>
+			
+			</tr>
+			</table>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    <button class="btn btn-primary custom_select_width"  data-dismiss="modal" onclick="searchPrescription()" >Ok</button>
+    <!-- data-dismiss="modal" aria-hidden="true" -->
+  </div>
+  </div>
+  </div>
+</div>
+      		
+     	 
+      <br>
+	  <br>
+      
+      <div th:replace="fragments/footer :: footer"/>
+
+	</div>
+</div>
+
+
+
+
+
+
+  
+ <!-- /.container -->
+
+</body>
+</html>

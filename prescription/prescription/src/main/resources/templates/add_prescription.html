@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<div th:replace="fragments/header :: header-css"/>
+<title>Add Prescription  Page</title>
+
+<style>
+
+.custom_select_width{
+    height:30px;
+    width: 120px;
+}
+.custom_btn_width {
+	height:30px;
+    width: 100px;
+}
+
+.custom_btn_width_2 {
+	height:30px;
+    width: 200px;
+}
+
+</style>
+
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+
+
+<div class="container">
+    <div class="col-md-6 col-md-offset-3">
+	<h1>Add Prescription  Page</h1>
+
+		User can add new prescription in this page 
+		<br>
+		<div class="form-group">
+                        <label for="DrugCode">Drug Code</label>: 
+                        <input type="text" id="addPrescriptionDrugCode" 
+                        	name="drugCode" class="form-control" 
+                        	autofocus="autofocus" placeholder="Drug code" />
+                    </div>
+
+
+			<table>
+			<tr> <th>Select Language : </th>
+				<th>&nbsp;&nbsp;&nbsp;&nbsp;</th>	
+				<th valign="top">
+				      <select id="addPreLangSelect" class="btn-primary custom_select_width">
+							<option value="english">English</option>
+							<option value="amharic">Amharic</option>
+							<option value="oromifa">Oromifa</option>
+							<option value="tigrigna">Tigrigna</option>
+						</select>
+						<br>
+				</th>
+			
+			</tr>
+			</table>
+			<br>
+
+			<div class="form-group">
+                        <label for="email">Drug Description</label>: 
+                        <textarea name="Text1"   id="addPrescriptionText" 
+							cols="80" rows="15" placeholder="Detail" ></textarea>
+                    </div>
+                    
+			
+			<table>
+			<tr>
+				<th valign="top">
+						<button type="button" id="addPrescGenerateQrcodeBtn" onclick="generateQrCode()"
+						class="btn btn-primary custom_btn_width_2">  Submit [Generate QR-Code]  </button>
+				</th>
+				<th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+				<th valign="top">
+						<button type="button" id="addPrescPrintGeneratedQrcodeBtn" onclick="PrintImage('addPrescGeneratedQrcodeimg')"
+						class="btn btn-primary custom_btn_width_2">  Print [Generated QR-Code]  </button>
+				</th>
+				<th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+				<th valign="top">
+						<button type="button" id="addPrescSearchQrcodeBtn" onclick="searchPrescription()"
+						class="btn btn-primary custom_btn_width_2">  Search  with Drug Code</button>
+				</th>
+			</tr>		
+			
+			</table>
+			<br>
+			
+			<div>
+			    <label for="email">Generated QR Code</label>: 
+				<img th:src="@{/QR_Images/drug_qr_code.jpg}" alt="image" style="width:100%" id="addPrescGeneratedQrcodeimg">
+		
+			<div>
+  
+			<br>
+			<br>
+			<div th:replace="fragments/footer :: footer"/>
+
+	</div> <!-- http://localhost:8080/QR_Images/4545.png -->
+    
+ </div>
+ 
+ <script>
+ 
+ function generateQrCode() {
+	 var ip = location.host;
+	 var drugCode = document.getElementById("addPrescriptionDrugCode").value;
+	 var drugdescription = document.getElementById("addPrescriptionText").value;
+	 
+	 var addPreLang=document.getElementById("addPreLangSelect");
+	 var language_ = addPreLang.options[addPreLang.selectedIndex].value;
+	 
+	 if(drugCode=="" || drugdescription==""){
+		 alert("Please insert the drug code and Description");
+	 }else{
+		 var drug = {};
+		 drug.code=drugCode;
+		 drug.description= drugdescription;
+		 drug.language = language_;
+		 
+		 theUrl = "http://" + ip + "/generateQrCode";
+		 var xmlHttp = new XMLHttpRequest();
+		 xmlHttp.open("POST", theUrl, false); // false for synchronous requestddd
+		 xmlHttp.send(JSON.stringify(drug));
+		 var response = xmlHttp.responseText;
+		 
+		 
+		 var image_src="http://"+location.host+"/QR_Images/"+drugCode+".png";
+		 
+		 document.getElementById('addPrescGeneratedQrcodeimg').src ="http://"+location.host+"/QR_Images/"+drugCode+".png";  
+		 alert(response);
+	 }
+ 
+ }
+ 
+ function searchPrescription(){
+	 var ip = location.host;
+	 var drugCode = document.getElementById("addPrescriptionDrugCode").value;
+	 var addPreLang=document.getElementById("addPreLangSelect");
+	 var language_ = addPreLang.options[addPreLang.selectedIndex].value;
+	 var theUrl = "http://" + ip +"/searchPrescription?code="+drugCode+"&language="+language_;
+	
+	 var xmlHttp = new XMLHttpRequest();
+	 xmlHttp.open("GET", theUrl, false); // false for synchronous requestddd
+	 xmlHttp.send(null);
+	 var response = xmlHttp.responseText;
+	 if(response!=""){
+		 var obj = JSON.parse(response);
+		 document.getElementById("addPrescriptionText").value=obj.description;
+		 document.getElementById('addPrescGeneratedQrcodeimg').src ="http://"+location.host+"/QR_Images/"+obj.code+".png";  
+	 }
+ }
+ 
+ 
+ 
+ 
+ function ImagetoPrint(source)
+ {
+     return "<html><head><scri"+"pt>function step1(){\n" +
+             "setTimeout('step2()', 10);}\n" +
+             "function step2(){window.print();window.close()}\n" +
+             "</scri" + "pt></head><body onload='step1()'>\n" +
+             "<img src='" + source + "' /></body></html>";
+ }
+
+ function PrintImage(source_img)
+ {
+	 var source = document.getElementById(source_img).src;
+     var Pagelink = "about:blank";
+     var pwa = window.open(Pagelink, "_new");
+     pwa.document.open();
+     pwa.document.write(ImagetoPrint(source));
+     pwa.document.close();
+ }
+ 
+ </script>
+<!-- 
+<script type="text/javascript" th:src="@{/webjars/jquery/3.2.1/jquery.min.js/}"></script>
+ <script type="text/javascript" th:src="@{/webjars/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
+ -->
+</body>
+</html>

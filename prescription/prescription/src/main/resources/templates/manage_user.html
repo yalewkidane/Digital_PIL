@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:th="http://www.thymeleaf.org">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<head>
+<div th:replace="fragments/header :: header-css"/>
+
+	<meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}" />
+
+<title>User Management  Page</title>
+
+
+<style>
+
+.custom_select_width{
+    height:30px;
+    width: 120px;
+}
+.custom_btn_width {
+	height:30px;
+    width: 100px;
+}
+
+</style>
+
+
+</head>
+
+<body>
+<div th:replace="fragments/header :: header"/>
+
+
+    <div class="container">
+    	<div class="col-md-6 col-md-offset-3">
+    	<h1>User Management Page</h1>
+    	<br>
+    	<table>
+			<tr>
+				<th>
+						<textarea name="Text"   id="managementViewEmailTxt" 
+							cols="50" rows="15" readonly> 
+						</textarea>
+				</th>
+				<th>&nbsp;&nbsp;&nbsp;&nbsp;</th>	
+				<th valign="top">
+				      <select id="managementApprovalSelect" class="btn-primary custom_select_width">
+							<option value="approved">Approved</option>
+							<option value="unapproved">Unapproved</option>
+							<option value="admin">Admin</option>
+						</select>
+				</th>
+				<th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+				<th valign="top">
+						<button type="button" id="managementSearchBtn" onclick="searchEmails()"
+						class="btn btn-primary custom_btn_width">  Search  </button>
+				</th>
+			</tr>
+	
+		</table>
+	
+	<br>
+	<br>
+		<table>
+			<tr>
+			<div class="form-group">
+                        <label for="email">Email</label>: 
+                        <input type="text" id="managementEmailInput" 
+                        	name="email" class="form-control" 
+                        	autofocus="autofocus" placeholder="Email" />
+                    </div>
+			</tr>
+			<tr>
+				<th>
+						<textarea name="Text1"   id="managementDetailText" 
+							cols="50" rows="15" placeholder="Detail" readonly> 
+						</textarea>
+				</th>
+				<th>&nbsp;&nbsp;&nbsp;&nbsp;</th>	
+				<th valign="top">
+				      <select id="managementSearchSelect" class="btn-primary custom_select_width">
+							<option value="search">Search</option>
+							<option value="approve">Approve</option>
+							<option value="admin">Admin</option>
+							<option value="delete">Delete</option>
+						</select>
+				</th>
+				<th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+				<th valign="top">
+						<button type="button" id="managementSendBtn"
+						class="btn btn-primary custom_btn_width"
+						onclick="updateWithEmail()">Send</button>
+				</th>
+			</tr>
+	
+		</table>
+	
+	
+	<br>
+	<br>
+    
+    
+    <div th:replace="fragments/footer :: footer"/>
+    
+    
+    	</div>
+    
+    </div>
+
+  
+ <script>
+ function httpGetTest() {
+	 var ip = location.host;
+	 theUrl = "http://" + ip +"/getTest";
+	 var xmlHttp = new XMLHttpRequest();
+	 xmlHttp.open("GET", theUrl, false); // false for synchronous requestddd
+	 xmlHttp.send(null);
+	 var response = xmlHttp.responseText;
+	 document.getElementById('managementViewEmailTxt').innerHTML = response;
+ }
+ 
+ function searchEmails() {
+	 var mgtApprovalSelect=document.getElementById("managementApprovalSelect");
+	 var mgtApprovalSelectVal = mgtApprovalSelect.options[mgtApprovalSelect.selectedIndex].value;
+	 var ip = location.host;
+	 theUrl = "http://" + ip +"/searchEmails?status="+mgtApprovalSelectVal;
+	 var xmlHttp = new XMLHttpRequest();
+	 xmlHttp.open("GET", theUrl, false); // false for synchronous requestddd
+	 xmlHttp.send(null);
+	 var response = xmlHttp.responseText;
+	 document.getElementById('managementViewEmailTxt').innerHTML = response;
+ }
+ 
+ function updateWithEmail() {
+	 var mgtSearchSelect=document.getElementById("managementSearchSelect");
+	 var mgtSearchSelectVal = mgtSearchSelect.options[mgtSearchSelect.selectedIndex].value;
+	 var ip = location.host;
+	 var email = document.getElementById("managementEmailInput").value;
+	 theUrl = "http://" + ip +"/updateWithEmail?email="+email+"&operation="+mgtSearchSelectVal;
+	 var xmlHttp = new XMLHttpRequest();
+	 xmlHttp.open("GET", theUrl, false); // false for synchronous requestddd
+	 xmlHttp.send(null);
+	 var response = xmlHttp.responseText;
+	 //alert(mgtSearchSelectVal);
+	 if(mgtSearchSelectVal=="search"){
+		 //alert("text");
+		 var obj = JSON.parse(response);
+		 response = JSON.stringify(obj, null, 2);
+	 }
+	 document.getElementById('managementDetailText').innerHTML = response;
+ }
+ 
+ 
+ </script>
+ 
+
+ <script type="text/javascript" th:src="@{/webjars/jquery/3.2.1/jquery.min.js/}"></script>
+ <script type="text/javascript" th:src="@{/webjars/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
+
+</body>
+</html>
