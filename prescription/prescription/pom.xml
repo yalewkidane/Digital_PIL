@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.arera.medical</groupId>
 	<artifactId>prescription</artifactId>
-	<version>0.0.1</version>
+	<version>1.0.0</version>
 	<name>prescription</name>
 	<description>Multi language prescription</description>
 
