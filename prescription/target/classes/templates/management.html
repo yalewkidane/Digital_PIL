@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<div th:replace="fragments/header :: header-css"/>
+<title>Management Page</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+
+
+</head>
+<body>
+<div th:replace="fragments/header :: header"/>
+
+<div class="container">
+	<div class="col-md-6 col-md-offset-3">
+    	<h1>Management Page</h1>
+    	
+    	 <br>    
+    	    
+           <div class="form-group">
+              ADMIN and User can add prescription!
+		  	<a th:href="@{/add_prescription}" style="color:blue;">
+		  	Add Prescription here</a>
+           </div>
+   
+   <br>        
+           <div class="form-group">
+              Only ADMIN can manage prescriptions! 
+		  	<a th:href="@{/manage_prescription}" style="color:blue;">
+		  		Manage Prescription here</a>
+           </div>
+   
+    	<br> 	
+    		<div class="form-group">
+              Only ADMIN can approve and manage user!
+  			 <a th:href="@{/manage_user}" style="color:blue;">Manage User here</a>
+           </div>
+  		
+    	
+    	<br>
+		<br>
+		
+		<div th:replace="fragments/footer :: footer"/>
+
+	</div>
+    
+</div>
+    
+    
+
+<script type="text/javascript" th:src="@{/webjars/jquery/3.2.1/jquery.min.js/}"></script>
+ <script type="text/javascript" th:src="@{/webjars/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
+
+  
+ 
+</body>
+</html>
