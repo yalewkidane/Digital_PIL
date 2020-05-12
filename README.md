@@ -1,10 +1,10 @@
 # Digital_PIL
-Multi-language QR-Code based digital prescription and description project 
+Multi-language QR-Code based digital prescription and description project <br/>
 
-make sure you have mongodb 
+make sure you have mongodb <br/>
 
-git clone 
-cd 
-download eclipse spring boot tool
-import the project as mvn 
+git clone <br/>
+cd <br/>
+download eclipse spring boot tool <br/>
+import the project as mvn <br/>
 
